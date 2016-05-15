@@ -95,6 +95,7 @@ INC_DIRS = \
 #	- Environment specific Unit test flags (UNITTEST_CFLAGS)  
 #
 CFLAGS += \
+	-ftest-coverage -fprofile-arcs -g -O0 --coverage \
 	$(UNITTEST_CFLAGS)
 
 # 
@@ -148,3 +149,19 @@ default:
 # Run Unit Test and see results
 #
 	./$(TARGET)
+
+#                               -------------
+# 								CODE COVERAGE
+#                               -------------
+
+# GCOV tool requires unit test code for code coverage analysis, to work on
+# single directory, we also copy unit test source file into unity out directory
+	cp $(TEST_DIR)/$(TEST_FILE) $(UNITY_OUT_PATH)
+
+# GCOV puts coverage files to makefile (this file) location but all related
+# files should be in same directory to make GCOV execution more simple so
+# move gcda and gcno file to Unity Out path which already
+	mv *.gcda *.gcno  $(UNITY_OUT_PATH)
+
+# Run GCOV tool to see code coverage
+	gcov $(UNITY_OUT_PATH)/$(TEST_FILE) -n
